@@ -140,6 +140,12 @@ class BasePage:
                 f"Unexpected href: {href}"
 
             return
+        
+        # ROUTE INTERCEPTION: Abort any background redirects heading to the App Store
+        self.page.route(
+            "**/apps.apple.com/**", 
+            lambda route: route.abort()
+        )
 
         target = locator.get_attribute("target")
 

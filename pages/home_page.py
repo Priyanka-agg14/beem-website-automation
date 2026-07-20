@@ -48,7 +48,7 @@ class HomePage(BasePage):
 
     def verify_get_cash_dropdown(self):
         self.open_menu(self.get_cash_menu, "Get Cash")
-        expected = ["Get Instant Cash", "Get Personal Loans", "Send & Receive Money", "Beem Pass for Family"]
+        expected = ["Get Instant Cash", "Get Personal Loans", "Send & Receive Money", "BEEM Pass for Family" if self.is_mobile() else "Beem Pass for Family"]
         self.verify_dropdown(self.get_cash_dropdown_items, self.get_cash_dropdown_icons, expected, icon_count=4)
 
     def verify_earn_money_dropdown(self):
@@ -69,9 +69,9 @@ class HomePage(BasePage):
 
     # === Navigation Steps using BasePage navigate ===
 
-    def click_get_started_button(self):
-        self.close_mobile_menu()
-        self.navigate(self.get_started_button, re.compile(r"/app/d/auth/verify|apps\.apple\.com"))
+    #def click_get_started_button(self):
+       # self.close_mobile_menu()
+       # self.navigate(self.get_started_button, re.compile(r"/app/d/auth/verify|apps\.apple\.com"))
 
     def click_get_instant_cash_button(self):
         self.open_menu(self.get_cash_menu, "Get Cash")

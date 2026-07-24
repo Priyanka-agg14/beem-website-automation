@@ -3,9 +3,13 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def go_to_homepage(pom, base_url: str):
-    """Automatically resets browser window context to base url before every execution."""
+    context = pom.home_page.page.context
+    while len(context.pages) > 1:
+        context.pages[-1].close()
     pom.home_page.launch_url(base_url)
-    pom.home_page.close_mobile_menu()
+    
+    if pom.home_page.is_mobile():
+        pom.home_page.close_mobile_menu()
 
 
 def test_getcash_menuitem_icons(pom, base_url: str):

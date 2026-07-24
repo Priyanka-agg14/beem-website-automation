@@ -47,19 +47,11 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", params=["desktop", "mweb"])
 def browser_context_args(browser_context_args, playwright: Playwright, request):
-    execution_type = request.config.getoption("--type").lower()
-    
-    # Enable chromium features to bypass protocol prompts
-    extra_args = [
-        "--start-maximized",
-        "--disable-external-intent-requests",
-        "--deny-permission-prompts",
-        "--disable-popup-blocking",
-    ]
+    device_type = request.param
 
-    if execution_type == "mweb":
+    if device_type == "mweb":
         mobile_device = playwright.devices["iPhone 14"]
         return {
             **browser_context_args,
@@ -68,9 +60,11 @@ def browser_context_args(browser_context_args, playwright: Playwright, request):
     else:
         return {
             **browser_context_args,
-            "no_viewport": True
+            "viewport": {"width": 1280, "height": 720},
+            "device_scale_factor": 1,
+            "is_mobile": False,
+            "has_touch": False,
         }
-
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):

@@ -42,8 +42,7 @@ class BasePage:
         )
 
     def is_mobile(self) -> bool:
-        viewport = self.page.viewport_size
-        return viewport and viewport["width"] < self.MOBILE_BREAKPOINT
+        return self.page.viewport_size["width"] < 768 if self.page.viewport_size else False
 
     # ==========================================================
     # Mobile Drawer

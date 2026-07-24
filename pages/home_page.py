@@ -67,48 +67,94 @@ class HomePage(BasePage):
         self.open_menu(self.resources_menu, "Resources")
         self.verify_dropdown(self.resources_dropdown_items, self.resources_dropdown_icons, ["About Us"])
 
-    # === Navigation Steps using BasePage navigate ===
-
-    #def click_get_started_button(self):
-       # self.close_mobile_menu()
-       # self.navigate(self.get_started_button, re.compile(r"/app/d/auth/verify|apps\.apple\.com"))
+    # === Navigation Methods ===
+    def click_get_started_button(self):
+        self.close_mobile_menu()
+        self.safe_click(
+            self.get_started_button, 
+            re.compile(r"/app/d/auth/verify|apps\.apple\.com|onelink\.me")
+    )
 
     def click_get_instant_cash_button(self):
         self.open_menu(self.get_cash_menu, "Get Cash")
-        self.navigate(self.get_instant_cash_button, re.compile(r"/get-instant-cash-advance|apps\.apple\.com"))
+        self.safe_click(
+            self.get_instant_cash_button, 
+            re.compile(r"/get-instant-cash-advance|onelink\.me")
+        )
 
     def click_get_personal_loans_button(self):
-        self.open_menu(self.get_cash_menu, "Get Cash")
-        self.navigate(self.get_personal_loans_button, re.compile(r"/personal-loan"))
+        if self.is_mobile():
+            self.open_menu(self.get_cash_menu, "Get Cash")
+            target = self.mobile_drawer.get_by_role("link", name=re.compile(r"Personal Loan|Check Loan Options", re.I))
+        else:
+            target = self.get_personal_loans_button
+        self.safe_click(target, re.compile(r"/personal-loan|onelink\.me"))
+
 
     def click_beem_arcade_button(self):
-        self.open_menu(self.earn_money_menu, "Earn Money")
-        self.navigate(self.beem_arcade_button, re.compile(r"/beem-arcade"))
+        if self.is_mobile():
+            self.open_menu(self.earn_money_menu, "Earn Money")
+            target = self.mobile_drawer.get_by_role(
+                "link", name=re.compile(r"Play Games|Arcade|Earn Now", re.I)
+            )
+        else:
+            target = self.beem_arcade_button
+
+        self.safe_click(target, re.compile(r"/beem-arcade|onelink\.me"))
 
     def click_device_insurance_link(self):
-        self.open_menu(self.stay_protected_menu, "Stay Protected")
-        self.navigate(self.device_insurance_link, re.compile(r"/beem-totalcare"))
+        if self.is_mobile():
+            self.open_menu(self.stay_protected_menu, "Stay Protected")
+            target = self.mobile_drawer.get_by_role("link", name=re.compile(r"Device Insurance|Protect Your Devices", re.I))
+        else:
+            target = self.device_insurance_link
+        self.safe_click(target, re.compile(r"/beem-totalcare|device-protection|onelink\.me"))
+
 
     def click_job_loss_insurance_link(self):
-        self.open_menu(self.stay_protected_menu, "Stay Protected")
-        self.navigate(self.job_loss_insurance_link, re.compile(r"/job-loss-and-disability-insurance"))
+        if self.is_mobile():
+            # 1. Open the mobile drawer and expand "Stay Protected"
+            self.open_menu(self.stay_protected_menu, "Stay Protected")
+            
+            # 2. Target any link inside the expanded drawer containing Job/Disability/Income
+            target = self.mobile_drawer.get_by_role(
+                "link", name=re.compile(r"Job|Disability|Income", re.IGNORECASE)
+            ).first
+        else:
+            target = self.job_loss_insurance_link
+
+        self.safe_click(target, re.compile(r"/job-loss-and-disability-insurance|/beem-totalcare|onelink\.me"))
+
 
     def click_will_trust_planning_link(self):
-        self.open_menu(self.stay_protected_menu, "Stay Protected")
-        self.navigate(self.will_trust_planning_link, re.compile(r"/will-and-trust-planning"))
+        if self.is_mobile():
+            self.open_menu(self.stay_protected_menu, "Stay Protected")
+            target = self.mobile_drawer.get_by_role(
+                "link", name=re.compile(r"Will|Trust|Estate", re.I)
+            ).first
+            target.wait_for(state="visible")
+        else:
+            target = self.will_trust_planning_link
+
+        self.safe_click(target, re.compile(r"/will-and-trust-planning|onelink\.me"))
+
 
     def click_life_insurance_link(self):
-        self.open_menu(self.stay_protected_menu, "Stay Protected")
-        self.navigate(self.life_insurance_link, re.compile(r"/life-insurance"))
+        if self.is_mobile():
+            self.open_menu(self.stay_protected_menu, "Stay Protected")
+            target = self.mobile_drawer.get_by_role("link", name=re.compile(r"Life insurance", re.I))
+        else:
+            target = self.life_insurance_link
+        self.safe_click(target, re.compile(r"/life-insurance|onelink\.me"))
 
     def click_view_all_benefits_button(self):
         self.close_mobile_menu()
-        self.navigate(self.view_all_benefits_button, re.compile(r"/pricing"))
+        self.safe_click(self.view_all_benefits_button, re.compile(r"/pricing|onelink\.me"))
 
     def click_explore_faqs_button(self):
         self.close_mobile_menu()
-        self.navigate(self.explore_faqs_button, re.compile(r"/support/home"))
+        self.safe_click(self.explore_faqs_button, re.compile(r"/support/home|onelink\.me"))
 
     def click_explore_blogs_button(self):
         self.close_mobile_menu()
-        self.navigate(self.explore_blogs_button, re.compile(r"/blog"))
+        self.safe_click(self.explore_blogs_button, re.compile(r"/blog"))

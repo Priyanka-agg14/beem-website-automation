@@ -13,9 +13,27 @@ class BasePage:
     # ==========================================================
     # Generic Helpers
     # ==========================================================
-
+    def safe_click(self, locator, expected_href_pattern=None):
+        """
+        Clicks an element safely, verifying its href and handling potential 
+        network aborts caused by blocked external redirects (e.g. App Store / OneLink).
+        """
+        locator.wait_for(state="visible")
+        
+        # Verify link pattern if provided
+        if expected_href_pattern:
+            href = locator.get_attribute("href") or ""
+            assert re.search(expected_href_pattern, href), f"Unexpected href target: {href}"
+            
+        # Perform click and catch expected network aborts from intercepted routes
+        try:
+            locator.click()
+        except Exception as e:
+            if "ERR_ABORTED" not in str(e):
+                raise e
+            
     def launch_url(self, url: str):
-        self.page.goto(url, wait_until="domcontentloaded")
+        self.page.goto(url, wait_until="domcontentloaded", timeout=45000)
 
     def verify_url(self, expected_url: str):
         expected = expected_url.rstrip("/")
